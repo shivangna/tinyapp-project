@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/shivangna/tinyapp-project/issues"
   },
-  "homepage": "https://github.com/shivangna/tinyapp-project#readme"
+  "homepage": "https://github.com/shivangna/tinyapp-project#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
