@@ -24,9 +24,15 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//renders the URLs
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
 });
 
+//renders information about a single URL
+app.get("/urls/:shortURL", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase};
+  res.render("urls_show", templateVars);
+});
