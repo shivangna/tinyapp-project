@@ -46,10 +46,24 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-
 //renders information about a single URL
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase};
   res.render("urls_show", templateVars);
 });
+
+
+
+//generates random alphanumeric character
+function generaterandomString() {
+  var randomString = "";
+  var possibleChars = "1234567890abcdefghijklmnopqrstuvqwxyz";
+  for (i = 0; i < 6; i++) {
+    randomString += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+  };
+  return randomString;
+}
+
+console.log(generaterandomString())
+
 
