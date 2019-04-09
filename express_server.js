@@ -1,3 +1,4 @@
+var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
@@ -22,3 +23,10 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
+
+app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase };
+  //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
+  res.render("urls_index", templateVars);
+});
+
