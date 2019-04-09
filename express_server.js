@@ -12,6 +12,9 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -31,8 +34,22 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// renders the page with the form
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+
+//currently response to obtain from urls/new to avoid POST error
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
+
+
 //renders information about a single URL
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase};
   res.render("urls_show", templateVars);
 });
+
