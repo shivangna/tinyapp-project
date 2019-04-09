@@ -12,6 +12,7 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+//makes POST request body human readable
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -34,13 +35,14 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// renders the page with the form
+
+// renders the page with the form that allows a user to input a longURL and send that data to API via a POST requuest
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
 
-//currently response to obtain from urls/new to avoid POST error
+//route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
@@ -54,7 +56,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 
-//generates random alphanumeric character
+//generates random alphanumeric character that will serve as the shortURL
 function generaterandomString() {
   var randomString = "";
   var possibleChars = "1234567890abcdefghijklmnopqrstuvqwxyz";
