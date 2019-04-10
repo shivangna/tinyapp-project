@@ -93,14 +93,15 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   res.cookie('username', username);
   res.redirect("/urls");
-
-
 });
 
 
-
-
-
+//handles the logout page and deletes the cookies
+app.post("/logout", (req, res) => {
+  //const username = req.body.username;
+  res.clearCookie('username');
+  res.redirect("/urls");
+});
 
 
 
