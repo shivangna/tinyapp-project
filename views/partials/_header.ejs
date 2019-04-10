@@ -3,9 +3,10 @@
 
 <h1> TinyApp </h1>
 <form method="POST" action="/login">
+        <h3> Logged in as: <%= username %> </h3>
         <label for="Username">  Name: </label>
-        <input type="text" name="name" placeholder="enter username">
-        <input type="submit" name = "Update!">
+        <input type="text" name="username" placeholder="enter username">
+        <button type="submit" class="btn btn-info">Log In</button>
 </form>
 
 
