@@ -44,9 +44,12 @@ app.get("/urls/new", (req, res) => {
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  var shortURLgenerated = generaterandomString();
+  urlDatabase[shortURLgenerated] = req.body.longURL;  // Log the POST request body to the console
+  console.log(urlDatabase);
+  res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
 });
+
 
 //renders information about a single URL
 app.get("/urls/:shortURL", (req, res) => {
@@ -55,17 +58,24 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 
+// user gives short URL which gets redirected to its long url
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL]
+  res.redirect(longURL);
+});
+
+
 
 //generates random alphanumeric character that will serve as the shortURL
 function generaterandomString() {
   var randomString = "";
-  var possibleChars = "1234567890abcdefghijklmnopqrstuvqwxyz";
+  var possibleChars = "1234567890abcdefghijklmnopqrstuvqwxyzABCDEFGHIJKLMNOPQRSTUVWYZ";
   for (i = 0; i < 6; i++) {
     randomString += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
   };
   return randomString;
 }
 
-console.log(generaterandomString())
+
 
 
