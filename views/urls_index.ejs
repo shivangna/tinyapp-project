@@ -16,8 +16,8 @@
   <h3> My URLs </h3>
     <% for(var KeyValue in urls) { %>
     <ul>
+     <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue] %>
       <form method="POST" action="<%= `/urls/${KeyValue}/delete` %> ">
-        <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue] %>
           <button> Delete </button>
           <a href = "<%= `/urls/${KeyValue}` %> "> Edit </a>
            </li>

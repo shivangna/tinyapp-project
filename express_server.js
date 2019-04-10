@@ -52,7 +52,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls/:shortURL/", (req, res) => {
   const theShortURL = req.params.shortURL
   console.log(theShortURL)
-  const UpdatedLongURL = req.body.long
+  const UpdatedLongURL = req.body.longURL
   for (var urlKeyValues in urlDatabase) {
     if (urlKeyValues === theShortURL) {
       urlDatabase[urlKeyValues] = UpdatedLongURL;
@@ -84,6 +84,15 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
 });
+
+//route handles POST requests to /login. Sets cookie named username to the value submitted
+app.post("/urls", (req, res) => {
+  var shortURLgenerated = generaterandomString();
+  urlDatabase[shortURLgenerated] = req.body.longURL;  // Log the POST request body to the console
+  console.log(urlDatabase);
+  res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
+});
+
 
 
 
