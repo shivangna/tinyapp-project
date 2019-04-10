@@ -1,3 +1,4 @@
+
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
@@ -20,34 +21,22 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
-//renders the URLs
-app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
-  //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
-  res.render("urls_index", templateVars);
-});
-
-
 // renders the page with the form that allows a user to input a longURL and send that data to API via a POST requuest
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
 
-//route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
-app.post("/urls", (req, res) => {
-  var shortURLgenerated = generaterandomString();
-  urlDatabase[shortURLgenerated] = req.body.longURL;  // Log the POST request body to the console
-  console.log(urlDatabase);
-  res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+
+//renders the URLs
+app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase };
+  //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
+  res.render("urls_index", templateVars);
 });
 
 //handles delete requests
@@ -58,7 +47,32 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");         // after deleted, redirects user to the index page
 });
 
-//renders information about a single URL
+
+//updates the long URL
+app.post("/urls/:shortURL/", (req, res) => {
+  const theShortURL = req.params.shortURL
+  console.log(theShortURL)
+  const UpdatedLongURL = req.body.longURL
+  for (var urlKeyValues in urlDatabase) {
+    if (urlKeyValues === theShortURL) {
+      urlDatabase[urlKeyValues] = UpdatedLongURL;
+    }};
+  res.redirect("/urls");
+});
+
+
+
+//route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
+app.post("/urls", (req, res) => {
+  var shortURLgenerated = generaterandomString();
+  urlDatabase[shortURLgenerated] = req.body.longURL;  // Log the POST request body to the console
+  console.log(urlDatabase);
+  res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
+});
+
+
+
+//short URL page
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase};
   res.render("urls_show", templateVars);
@@ -75,6 +89,8 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 
+
+
 //generates random alphanumeric character that will serve as the shortURL
 function generaterandomString() {
   var randomString = "";
@@ -85,5 +101,10 @@ function generaterandomString() {
   return randomString;
 }
 
+
+
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 

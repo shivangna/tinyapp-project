@@ -8,25 +8,18 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
 </head>
-<header> <% include ./partials/_header %> </header>
 <body style="font-size:20px; padding:50px;">
-  <a href="to add"> Create Tiny Url </a>
   <br>
-  <br>
-   <ul>
     <% for(var KeyValue in longURL) { %>
+    <form action="" method="POST">
     <% if (shortURL === KeyValue){%>
-    <h3> TinyUrl for <%= longURL[KeyValue] %> </h3>
-    <p> <%= KeyValue %> </p>
-    <form class="form-inline" action="/urls" method="POST">
-      <div class="form-group mb-2">
-        <label for="longURL">Enter a URL:</label>
-        <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
+    <h3> ShortURL <%= KeyValue %> </h3>
+        <label for="longURL">Enter the updated URL:</label>
+        <input type = "text" name = "longURL">
+        <input type="submit" name="Update">
+
     </form>
-    <%}}; %>
-</ul>
+    <% }}; %>
 </body>
 </html>
 

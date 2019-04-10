@@ -17,7 +17,10 @@
     <% for(var KeyValue in urls) { %>
     <ul>
       <form method="POST" action="<%= `/urls/${KeyValue}/delete` %> ">
-        <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue] %>  <button> Delete </button> </li>
+        <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue] %>
+          <button> Delete </button>
+          <a href = "<%= `/urls/${KeyValue}` %> "> Edit </a>
+           </li>
         </ul>
         </form>
     <% }; %>
