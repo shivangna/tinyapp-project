@@ -50,6 +50,13 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
 });
 
+//handles delete requests
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const urlToDelete = req.params.shortURL // obtains the shorturl to delete
+  delete urlDatabase[urlToDelete];
+  console.log(urlDatabase);
+  res.redirect("/urls");         // after deleted, redirects user to the index page
+});
 
 //renders information about a single URL
 app.get("/urls/:shortURL", (req, res) => {
@@ -63,6 +70,8 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
 });
+
+
 
 
 

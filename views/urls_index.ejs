@@ -14,11 +14,13 @@
   <br>
   <br>
   <h3> My URLs </h3>
-   <ul>
     <% for(var KeyValue in urls) { %>
-        <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue] %> </li>
-    <%}; %>
-</ul>
+    <ul>
+      <form method="POST" action="<%= `/urls/${KeyValue}/delete` %> ">
+        <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue] %>  <button> Delete </button> </li>
+        </ul>
+        </form>
+    <% }; %>
 </body>
 </html>
 
