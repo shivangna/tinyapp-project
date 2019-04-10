@@ -52,7 +52,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls/:shortURL/", (req, res) => {
   const theShortURL = req.params.shortURL
   console.log(theShortURL)
-  const UpdatedLongURL = req.body.longURL
+  const UpdatedLongURL = req.body.long
   for (var urlKeyValues in urlDatabase) {
     if (urlKeyValues === theShortURL) {
       urlDatabase[urlKeyValues] = UpdatedLongURL;
