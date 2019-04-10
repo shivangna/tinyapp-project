@@ -2,7 +2,9 @@
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
+var cookieParser = require('cookie-parser')
 app.set("view engine", "ejs");
+app.use(cookieParser())
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -23,7 +25,8 @@ app.get("/", (req, res) => {
 
 // renders the page with the form that allows a user to input a longURL and send that data to API via a POST requuest
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+let templateVars = { username: req.cookies["username"]};
+  res.render("urls_new", templateVars);
 });
 
 
@@ -34,7 +37,7 @@ app.get("/urls.json", (req, res) => {
 
 //renders the URLs
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {username: req.cookies["username"], urls: urlDatabase };
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
 });
@@ -74,7 +77,7 @@ app.post("/urls", (req, res) => {
 
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase};
+  let templateVars = { username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase};
   res.render("urls_show", templateVars);
 });
 
@@ -85,9 +88,20 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//route handles POST requests to /login. Sets cookie named username to the value submitted
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username);
+  res.redirect("/urls");
+});
 
 
-
+//handles the logout page and deletes the cookies
+app.post("/logout", (req, res) => {
+  //const username = req.body.username;
+  res.clearCookie('username');
+  res.redirect("/urls");
+});
 
 
 
