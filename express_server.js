@@ -23,17 +23,6 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-// renders the page with the form that allows a user to input a longURL and send that data to API via a POST requuest
-app.get("/urls/new", (req, res) => {
-let templateVars = { username: req.cookies["username"]};
-  res.render("urls_new", templateVars);
-});
-
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
 
 //renders the URLs
 app.get("/urls", (req, res) => {
@@ -42,14 +31,16 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-//handles delete requests
-app.post("/urls/:shortURL/delete", (req, res) => {
-  const urlToDelete = req.params.shortURL // obtains the shorturl to delete
-  delete urlDatabase[urlToDelete];
-  console.log(urlDatabase);
-  res.redirect("/urls");         // after deleted, redirects user to the index page
+
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
 });
 
+// renders the page with the form that allows a user to input a longURL and send that data to API via a POST request
+app.get("/urls/new", (req, res) => {
+let templateVars = { username: req.cookies["username"]};
+  res.render("urls_new", templateVars);
+});
 
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
@@ -63,7 +54,11 @@ app.post("/urls/:shortURL/", (req, res) => {
   res.redirect("/urls");
 });
 
-
+// user gives short URL which gets redirected to its long url
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL]
+  res.redirect(longURL);
+});
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
 app.post("/urls", (req, res) => {
@@ -74,6 +69,20 @@ app.post("/urls", (req, res) => {
 });
 
 
+//handles delete requests
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const urlToDelete = req.params.shortURL // obtains the shorturl to delete
+  delete urlDatabase[urlToDelete];
+  console.log(urlDatabase);
+  res.redirect("/urls");         // after deleted, redirects user to the index page
+});
+
+
+
+
+
+
+
 
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
@@ -82,11 +91,7 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 
-// user gives short URL which gets redirected to its long url
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL]
-  res.redirect(longURL);
-});
+
 
 //route handles POST requests to /login. Sets cookie named username to the value submitted
 app.post("/login", (req, res) => {
