@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 
 //renders the URLs
 app.get("/urls", (req, res) => {
-  let templateVars = {username: req.cookies["username"], urls: urlDatabase };
+  let templateVars = {user_id: req.cookies["user_id"], urls: urlDatabase };
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
 });
@@ -52,9 +52,11 @@ app.get("/urls.json", (req, res) => {
 
 // renders the page with the form that allows a user to input a longURL and send that data to API via a POST request
 app.get("/urls/new", (req, res) => {
-let templateVars = { username: req.cookies["username"]};
+  let templateVars = { userInfo: users[req.cookies["user_id"]],  user_id: req.cookies["user_id"]};
   res.render("urls_new", templateVars);
 });
+
+
 
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
@@ -96,7 +98,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase};
+  let templateVars = { user_id: req.cookies["user_id"], shortURL: req.params.shortURL, longURL: urlDatabase};
   res.render("urls_show", templateVars);
 });
 
@@ -105,8 +107,14 @@ app.get("/urls/:shortURL", (req, res) => {
 //route handles POST requests to /login. Sets cookie named username to the value submitted
 app.post("/login", (req, res) => {
   const username = req.body.username;
-  res.cookie('username', username);
+  res.cookies["user_id"];
   res.redirect("/urls");
+});
+
+
+//login
+app.get("/login", (req, res) => {
+  res.render("user_login")
 });
 
 
@@ -132,7 +140,7 @@ app.post("/register", (req, res) => {
   const user_id = generaterandomString();
   if (user_email == false || user_password == false) {
     res.status(400).send("enter both username and password");
-  } else if (searchEmail(user_email) === true) {
+  } else if (searchUserProperties(user_email, "email") === true) {
     res.status(400).send("email already in use");
   } else {
     users[user_id] = {'id': user_id, 'email': user_email, 'password' : user_password}
@@ -144,12 +152,18 @@ app.post("/register", (req, res) => {
 
 
 //this email checks if given email for registration already exists in user object
-function searchEmail (emailProvided) {
+function searchUserProperties (propertyToSearch, property) {
   for (var userids in users) {
-    if (emailProvided === users[userids]['email']) {
+    if (propertyToSearch === users[userids][property]) {
       return true;
     }
   }
+}
+
+
+//pass the objects based on the user ID.
+function returnUserInfo (searchUser) {
+  return users[searchUser];
 }
 
 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title> User Registration - TinyApp </title>
+  </head>
+  <body style="font-size:20px; padding:50px;">
+    <h3> Please LOG IN </h3>
+    <!-- action = tells form which url to submit
+      method = tells wihch HTTP method to use -->
+    <form method="POST" action="/register">
+      <label for="email">  email: </label>
+      <input type="email" name="email" placeholder="enter email">
+
+      <label for="password">  password: </label>
+      <input type="password" name="password" placeholder="enter password">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </body>
+</html>
+
