@@ -80,16 +80,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 
 
-
-
-
-
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase};
   res.render("urls_show", templateVars);
 });
-
 
 
 
@@ -107,6 +102,16 @@ app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect("/urls");
 });
+
+
+//user registration page
+app.get("/register", (req, res) => {
+  res.render("user_registration");
+});
+
+
+
+
 
 
 
