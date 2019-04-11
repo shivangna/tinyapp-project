@@ -11,6 +11,20 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//stores and accesses the users in the app
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -104,13 +118,23 @@ app.post("/logout", (req, res) => {
 });
 
 
-//user registration page
+//user registration page, renders the page
 app.get("/register", (req, res) => {
   res.render("user_registration");
 });
 
 
-
+//adds the new user received from the page to global users object
+app.post("/register", (req, res) => {
+  //const username = req.body.username;
+  const user_email = req.body.email;
+  const user_password = req.body.password;
+  const user_id = generaterandomString();
+  users[user_id] = {'id': user_id, 'email': user_email, 'password' : user_password}
+  console.log(users)
+  res.cookie('user_id', user_id);
+  res.redirect("/urls");
+});
 
 
 
