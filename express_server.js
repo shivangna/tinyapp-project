@@ -106,10 +106,18 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //route handles POST requests to /login. Sets cookie named username to the value submitted
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookies["user_id"];
-  res.redirect("/urls");
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  const verifiedUserID = credentialVerify(userEmail, userPassword);
+  if (verifiedUserID) {
+    res.cookie('user_id', verifiedUserID)
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("please input the correct credentials")
+  }
 });
+
+
 
 
 //login
@@ -120,8 +128,7 @@ app.get("/login", (req, res) => {
 
 //handles the logout page and deletes the cookies
 app.post("/logout", (req, res) => {
-  //const username = req.body.username;
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/urls");
 });
 
@@ -134,7 +141,6 @@ app.get("/register", (req, res) => {
 
 //adds the new user received from the page to global users object
 app.post("/register", (req, res) => {
-  //const username = req.body.username;
   const user_email = req.body.email;
   const user_password = req.body.password;
   const user_id = generaterandomString();
@@ -178,6 +184,18 @@ function generaterandomString() {
   return randomString;
 }
 
+
+
+
+//verifies the email and password of the user
+function credentialVerify(email, password) {
+  for (let user in users) {
+    if (users[user]['email'] === email && users[user]['password'] === password) {
+      const verifiedID = users[user]["id"];
+      return verifiedID;
+    }
+  }
+}
 
 
 // app.get("/hello", (req, res) => {
