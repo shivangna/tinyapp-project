@@ -130,15 +130,27 @@ app.post("/register", (req, res) => {
   const user_email = req.body.email;
   const user_password = req.body.password;
   const user_id = generaterandomString();
-  if (user_email === '' || user_password === '') {
+  if (user_email == false || user_password == false) {
     res.status(400).send("enter both username and password");
-  };
-  users[user_id] = {'id': user_id, 'email': user_email, 'password' : user_password}
-  console.log(users)
-  res.cookie('user_id', user_id);
-  res.redirect("/urls");
+  } else if (searchEmail(user_email) === true) {
+    res.status(400).send("email already in use");
+  } else {
+    users[user_id] = {'id': user_id, 'email': user_email, 'password' : user_password}
+    res.cookie('user_id', user_id);
+    res.redirect("/urls");
+  }
 });
 
+
+
+//this email checks if given email for registration already exists in user object
+function searchEmail (emailProvided) {
+  for (var userids in users) {
+    if (emailProvided === users[userids]['email']) {
+      return true;
+    }
+  }
+}
 
 
 
