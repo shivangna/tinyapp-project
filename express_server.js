@@ -130,6 +130,9 @@ app.post("/register", (req, res) => {
   const user_email = req.body.email;
   const user_password = req.body.password;
   const user_id = generaterandomString();
+  if (user_email === '' || user_password === '') {
+    res.status(400).send("enter both username and password");
+  };
   users[user_id] = {'id': user_id, 'email': user_email, 'password' : user_password}
   console.log(users)
   res.cookie('user_id', user_id);
