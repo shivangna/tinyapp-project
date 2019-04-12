@@ -6,9 +6,10 @@ var cookieParser = require('cookie-parser')
 app.set("view engine", "ejs");
 app.use(cookieParser())
 
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+
+const urlDatabase = {
+  b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "8s9BrJ"},
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 //stores and accesses the users in the app
@@ -63,7 +64,7 @@ app.get("/urls/new", (req, res) => {
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
   const theShortURL = req.params.shortURL
-  console.log(theShortURL)
+  //console.log(theShortURL)
   const UpdatedLongURL = req.body.longURL
   for (var urlKeyValues in urlDatabase) {
     if (urlKeyValues === theShortURL) {
@@ -74,7 +75,7 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 // user gives short URL which gets redirected to its long url
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL]
+  const longURL = urlDatabase[req.params.shortURL]['longURL'];
   res.redirect(longURL);
 });
 
