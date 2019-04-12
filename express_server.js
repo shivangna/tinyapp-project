@@ -13,8 +13,8 @@ var urlDatabase = {
 
 //stores and accesses the users in the app
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
+  "8s9BrJ": {
+    id: "8s9BrJ",
     email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 
 //renders the URLs
 app.get("/urls", (req, res) => {
-  let templateVars = {user_id: req.cookies["user_id"], urls: urlDatabase };
+  let templateVars = {user_id: req.cookies["user_id"], urls: urlDatabase, loggedUser: users[req.cookies["user_id"]]};
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
 });
@@ -52,7 +52,7 @@ app.get("/urls.json", (req, res) => {
 
 // renders the page with the form that allows a user to input a longURL and send that data to API via a POST request
 app.get("/urls/new", (req, res) => {
-  let templateVars = { userInfo: users[req.cookies["user_id"]],  user_id: req.cookies["user_id"]};
+  let templateVars = { userInfo: users[req.cookies["user_id"]],  user_id: req.cookies["user_id"], loggedUser: users[req.cookies["user.id"]]};
   res.render("urls_new", templateVars);
 });
 
@@ -98,7 +98,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { user_id: req.cookies["user_id"], shortURL: req.params.shortURL, longURL: urlDatabase};
+  let templateVars = { user_id: req.cookies["user_id"], shortURL: req.params.shortURL, longURL: urlDatabase, loggedUser: users[req.cookies["user.id"]]};
   res.render("urls_show", templateVars);
 });
 
