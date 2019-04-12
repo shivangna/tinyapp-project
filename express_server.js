@@ -9,7 +9,8 @@ app.use(cookieParser())
 
 const urlDatabase = {
   b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "8s9BrJ"},
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  i3BoGr: { longURL: "https://www.google.ca", userID: "8s9BrJ" },
+  i45h21: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 //stores and accesses the users in the app
@@ -41,9 +42,13 @@ app.get("/", (req, res) => {
 
 //renders the URLs
 app.get("/urls", (req, res) => {
-  let templateVars = {user_id: req.cookies["user_id"], urls: urlDatabase, loggedUser: users[req.cookies["user_id"]]};
+  if (req.cookies["user_id"]) {
+  let templateVars = {user_id: req.cookies["user_id"], urls: urlsForUser(req.cookies["user_id"]), loggedUser: users[req.cookies["user_id"]]};
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
+  } else {
+    res.status(403).send("please log in to use your URLs")
+  }
 });
 
 
@@ -96,8 +101,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(urlDatabase);
   res.redirect("/urls");         // after deleted, redirects user to the index page
 });
-
-
 
 
 //short URL page
@@ -200,6 +203,18 @@ function credentialVerify(email, password) {
     }
   }
 }
+
+function urlsForUser(id) {
+  var specificUserObject = {};
+  for (var key in urlDatabase) {
+      var url = urlDatabase[key];
+      if (url.userID === id) {
+        specificUserObject[key] = {'longURL': url['longURL'], 'userID': url['userID']}
+      }
+    }
+return specificUserObject
+  }
+
 
 
 // app.get("/hello", (req, res) => {
