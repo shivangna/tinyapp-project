@@ -66,15 +66,19 @@ app.get("/urls/new", (req, res) => {
 
 
 
+
+
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
   const theShortURL = req.params.shortURL
   //console.log(theShortURL)
   const UpdatedLongURL = req.body.longURL
+
+  if (urlDatabase[theShortURL]['userID'] === req.cookies["user_id"]) {
   for (var urlKeyValues in urlDatabase) {
     if (urlKeyValues === theShortURL) {
       urlDatabase[urlKeyValues]['longURL'] = UpdatedLongURL;
-    }};
+    }}};
   res.redirect("/urls");
 });
 
@@ -203,6 +207,7 @@ function credentialVerify(email, password) {
     }
   }
 }
+
 
 function urlsForUser(id) {
   var specificUserObject = {};

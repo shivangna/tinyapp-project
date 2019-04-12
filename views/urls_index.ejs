@@ -15,6 +15,7 @@
   <br>
   <h3> My URLs </h3>
     <% for(var KeyValue in urls) { %>
+    <% if (user_id === urls[KeyValue]['userID']) {%>
     <ul>
      <li> <b> <%= KeyValue %> </b> - <%= urls[KeyValue]['longURL'] %>
       <form method="POST" action="<%= `/urls/${KeyValue}/delete` %> ">
@@ -23,7 +24,7 @@
            </li>
         </ul>
         </form>
-    <% }; %>
+    <% }}; %>
 </body>
 </html>
 
