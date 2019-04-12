@@ -53,14 +53,16 @@ app.get("/urls.json", (req, res) => {
 // renders the page with the form that allows a user to input a longURL and send that data to API via a POST request
 app.get("/urls/new", (req, res) => {
   let templateVars = { userInfo: users[req.cookies["user_id"]],  user_id: req.cookies["user_id"], loggedUser: users[req.cookies["user.id"]]};
+  if (req.cookies["user_id"]) {
   res.render("urls_new", templateVars);
+} else res.redirect("/login")
 });
 
-  const theShortURL = req.params.shortURL
 
 
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
+  const theShortURL = req.params.shortURL
   console.log(theShortURL)
   const UpdatedLongURL = req.body.longURL
   for (var urlKeyValues in urlDatabase) {
