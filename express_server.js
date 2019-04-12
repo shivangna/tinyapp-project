@@ -17,7 +17,7 @@ const users = {
   "8s9BrJ": {
     id: "8s9BrJ",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "1"
   },
  "user2RandomID": {
     id: "user2RandomID",
@@ -68,7 +68,7 @@ app.post("/urls/:shortURL/", (req, res) => {
   const UpdatedLongURL = req.body.longURL
   for (var urlKeyValues in urlDatabase) {
     if (urlKeyValues === theShortURL) {
-      urlDatabase[urlKeyValues] = UpdatedLongURL;
+      urlDatabase[urlKeyValues]['longURL'] = UpdatedLongURL;
     }};
   res.redirect("/urls");
 });
@@ -81,8 +81,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
 app.post("/urls", (req, res) => {
+  console.log(req);
   var shortURLgenerated = generaterandomString();
-  urlDatabase[shortURLgenerated] = req.body.longURL;  // Log the POST request body to the console
+  urlDatabase[shortURLgenerated] = {longURL: req.body.longURL, userID: [req.cookies["user.id"]]};  // Log the POST request body to the console
   console.log(urlDatabase);
   res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
 });
