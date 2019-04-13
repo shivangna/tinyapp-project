@@ -66,8 +66,6 @@ app.get("/urls/new", (req, res) => {
 
 
 
-
-
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
   const theShortURL = req.params.shortURL
@@ -90,9 +88,8 @@ app.get("/u/:shortURL", (req, res) => {
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
 app.post("/urls", (req, res) => {
-  console.log(req);
   var shortURLgenerated = generaterandomString();
-  urlDatabase[shortURLgenerated] = {longURL: req.body.longURL, userID: [req.cookies["user.id"]]};  // Log the POST request body to the console
+  urlDatabase[shortURLgenerated] = {longURL: req.body.longURL, userID: req.cookies["user_id"]};  // Log the POST request body to the console
   console.log(urlDatabase);
   res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
 });
@@ -101,15 +98,17 @@ app.post("/urls", (req, res) => {
 //handles delete requests
 app.post("/urls/:shortURL/delete", (req, res) => {
   const urlToDelete = req.params.shortURL // obtains the shorturl to delete
+  if (urlDatabase[urlToDelete]['userID'] === req.cookies["user_id"]) {
   delete urlDatabase[urlToDelete];
   console.log(urlDatabase);
+  }
   res.redirect("/urls");         // after deleted, redirects user to the index page
 });
 
 
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { user_id: req.cookies["user_id"], shortURL: req.params.shortURL, longURL: urlDatabase, loggedUser: users[req.cookies["user.id"]]};
+  let templateVars = { user_id: req.cookies["user_id"], shortURL: req.params.shortURL, longURL: urlDatabase, urlDatabase: urlDatabase, loggedUser: users[req.cookies["user.id"]]};
   res.render("urls_show", templateVars);
 });
 
