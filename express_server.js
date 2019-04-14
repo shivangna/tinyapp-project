@@ -155,7 +155,7 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   const user_email = req.body.email;
   const user_password = req.body.password
-  const hashedPassword = bcrypt.hashSync(password_given,10);
+  const hashedPassword = bcrypt.hashSync(user_password,10);
   const user_id = generaterandomString();
   if (user_email == false || user_password == false) {
     res.status(400).send("enter both username and password");
