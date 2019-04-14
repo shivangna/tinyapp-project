@@ -3,6 +3,7 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 var cookieParser = require('cookie-parser')
+const bcrypt = require('bcrypt');
 app.set("view engine", "ejs");
 app.use(cookieParser())
 
@@ -69,7 +70,7 @@ app.get("/urls/new", (req, res) => {
 //updates the long URL
 app.post("/urls/:shortURL/", (req, res) => {
   const theShortURL = req.params.shortURL
-  //console.log(theShortURL)
+  console.log(theShortURL)
   const UpdatedLongURL = req.body.longURL
 
   if (urlDatabase[theShortURL]['userID'] === req.cookies["user_id"]) {
@@ -82,6 +83,7 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 // user gives short URL which gets redirected to its long url
 app.get("/u/:shortURL", (req, res) => {
+  let templateVars = {user_id: req.cookies["user_id"]}
   const longURL = urlDatabase[req.params.shortURL]['longURL'];
   res.redirect(longURL);
 });
@@ -152,14 +154,15 @@ app.get("/register", (req, res) => {
 //adds the new user received from the page to global users object
 app.post("/register", (req, res) => {
   const user_email = req.body.email;
-  const user_password = req.body.password;
+  const user_password = req.body.password
+  const hashedPassword = bcrypt.hashSync(password_given,10);
   const user_id = generaterandomString();
   if (user_email == false || user_password == false) {
     res.status(400).send("enter both username and password");
   } else if (searchUserProperties(user_email, "email") === true) {
     res.status(400).send("email already in use");
   } else {
-    users[user_id] = {'id': user_id, 'email': user_email, 'password' : user_password}
+    users[user_id] = {'id': user_id, 'email': user_email, 'password' : hashedPassword}
     res.cookie('user_id', user_id);
     res.redirect("/urls");
   }
@@ -200,11 +203,12 @@ function generaterandomString() {
 //verifies the email and password of the user
 function credentialVerify(email, password) {
   for (let user in users) {
-    if (users[user]['email'] === email && users[user]['password'] === password) {
+    if (users[user]['email'] === email && bcrypt.compareSync(password,users[user]['password'])) {
       const verifiedID = users[user]["id"];
       return verifiedID;
     }
   }
+  return false;
 }
 
 
