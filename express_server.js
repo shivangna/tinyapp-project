@@ -93,8 +93,7 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 // user gives short URL which gets redirected to its long url
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL]['longURL'];
-  res.redirect(longURL);
+  res.redirect(`${urlDatabase[req.params.shortURL]['longURL']}`);
 });
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
@@ -173,12 +172,13 @@ app.post("/register", (req, res) => {
   const user_email = req.body.email;
   const user_password = req.body.password
   const hashedPassword = bcrypt.hashSync(user_password,10);
-  const user_id = generaterandomString();
   if (user_email == false || user_password == false) {
     res.status(400).send("enter both username and password");
   } else if (searchUserProperties(user_email, "email") === true) {
     res.status(400).send("email already in use");
   } else {
+    let idGenerated = generaterandomString();
+    let hashedPassword = bcrypt.hashSync(req.body.password,10)
     users[user_id] = {'id': user_id, 'email': user_email, 'password' : hashedPassword}
     req.session.user_id;
     res.redirect("/urls");
