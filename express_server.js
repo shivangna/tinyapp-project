@@ -143,7 +143,11 @@ app.post("/login", (req, res) => {
 
 //login
 app.get("/login", (req, res) => {
-  res.render("user_login")
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+  res.render("user_login");
+  }
 });
 
 
@@ -156,7 +160,11 @@ app.post("/logout", (req, res) => {
 
 //user registration page, renders the page
 app.get("/register", (req, res) => {
-  res.render("user_registration");
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+  res.render("user_registration")
+  };
 });
 
 
