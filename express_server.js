@@ -16,19 +16,15 @@ app.use(cookieSession({
 //makes POST request body human readable
 app.use(bodyParser.urlencoded({extended: true}));
 
-
-
-const urlDatabase = {};
-
-//stores and accesses the users in the app
-const users = {};
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+const urlDatabase = {};
+const users = {};
 
 
+//Application Pathways -------------------------------------------------------------------------------------
 app.get("/", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls")
@@ -71,8 +67,9 @@ app.get("/urls/new", (req, res) => {
   let templateVars = { users: users,  user_id: req.session.user_id};
   if (req.session.user_id) {
   res.render("urls_new", templateVars);
-} else res.redirect("/login")
-});
+} else {
+  res.redirect("/login")
+}});
 
 
 
@@ -92,8 +89,7 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 // user gives short URL which gets redirected to its long url
 app.get("/u/:shortURL", (req, res) => {
-  shortURLRedirect = req.params.shortURL
-  res.redirect(urlDatabase[shortURLRedirect]['longURL']);
+  res.redirect(`${urlDatabase[req.params.shortURL]['longURL']}`);
 });
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
