@@ -13,7 +13,7 @@ a full stack web app built with Node and Express that allows users to shorten lo
 
 !["creating new URLs"](https://github.com/shivangna/tinyapp-project/blob/master/docs/creating%20new%20urls.png)
 
-!["page for a specific short URL (with provision to update long URLup"](#https://github.com/shivangna/tinyapp-project/blob/master/docs/update%20long%20URL.png)
+!["page for a specific short URL (with provision to update long URL"](https://github.com/shivangna/tinyapp-project/blob/master/docs/update%20long%20URL.png)
 
 ## Dependencies
 
