@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,19 +10,24 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-      <% include partials/_header %>
-  <br>
-    <% for(var KeyValue in longURL) { %>
-    <form action="" method="POST">
-    <% if (shortURL === KeyValue){%>
-    <h3> ShortURL <%= KeyValue %> </h3>
-        <label for="longURL">Enter the updated URL:</label>
+      <form action="" method="POST">
+
+        <% if (user_id) { %>
+    <% for(var KeyValue in urlDatabase) { %>
+
+         <% if (shortURL === KeyValue){ %>
+         <h3> Short URL: <%= KeyValue %> </h3>
+         <h3> long URL: <%= urlDatabase[KeyValue].longURL %> </h3>
+        <label for="longURL">Enter the updated Long URL:</label>
         <input type = "text" name = "longURL" value="">
         <input type="submit" name="Update">
-
     </form>
-    <% }}; %>
+    <% } else { %>
+    <% "Short URL does not exist. Please try again" %>
+    <% } %>
+    <% } %>
+    <% } else { %>
+    <% return "please login at localhost:8080/login to edit a URL" %>
+  <% } %>
 </body>
 </html>
-
-

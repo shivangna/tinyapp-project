@@ -1,9 +1,11 @@
-
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session')
+const bodyParser = require("body-parser");
+
+
 app.set("view engine", "ejs");
 app.use(cookieSession({
   name: 'session',
@@ -12,30 +14,14 @@ app.use(cookieSession({
 }))
 
 //makes POST request body human readable
-const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 
 
-const urlDatabase = {
-  b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "8s9BrJ"},
-  i3BoGr: { longURL: "https://www.google.ca", userID: "8s9BrJ" },
-  i45h21: { longURL: "https://www.google.ca", userID: "aJ48lW" }
-};
+const urlDatabase = {};
 
 //stores and accesses the users in the app
-const users = {
-  "8s9BrJ": {
-    id: "8s9BrJ",
-    email: "user@example.com",
-    password: "1"
-  },
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-}
+const users = {};
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -50,6 +36,19 @@ app.get("/", (req, res) => {
   res.redirect("/login");
 }});
 
+
+//route handles POST requests to /login. Sets cookie named username to the value submitted
+app.post("/login", (req, res) => {
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  const verifiedUserID = credentialVerify(userEmail, userPassword);
+  if (verifiedUserID) {
+    req.session.user_id = verifiedUserID;
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("please input the correct credentials")
+  }
+});
 
 //renders the URLs
 app.get("/urls", (req, res) => {
@@ -93,7 +92,8 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 // user gives short URL which gets redirected to its long url
 app.get("/u/:shortURL", (req, res) => {
-  res.redirect(`${urlDatabase[req.params.shortURL]['longURL']}`);
+  shortURLRedirect = req.params.shortURL
+  res.redirect(urlDatabase[shortURLRedirect]['longURL']);
 });
 
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
@@ -121,22 +121,6 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { user_id: req.session.user_id, shortURL: req.params.shortURL, urlDatabase: urlDatabase, users: users};
   res.render("urls_show", templateVars);
 });
-
-
-
-//route handles POST requests to /login. Sets cookie named username to the value submitted
-app.post("/login", (req, res) => {
-  const userEmail = req.body.email;
-  const userPassword = req.body.password;
-  const verifiedUserID = credentialVerify(userEmail, userPassword);
-  if (verifiedUserID) {
-    req.session.user_id = verifiedUserID;
-    res.redirect("/urls");
-  } else {
-    res.status(403).send("please input the correct credentials")
-  }
-});
-
 
 
 
@@ -179,12 +163,19 @@ app.post("/register", (req, res) => {
   } else {
     let idGenerated = generaterandomString();
     let hashedPassword = bcrypt.hashSync(req.body.password,10)
-    users[user_id] = {'id': user_id, 'email': user_email, 'password' : hashedPassword}
+    users[idGenerated] = {'id': idGenerated, 'email': user_email, 'password' : hashedPassword}
     req.session.user_id;
     res.redirect("/urls");
   }
 });
 
+
+
+
+
+
+
+//All functions below
 
 
 //this email checks if given email for registration already exists in user object
@@ -220,13 +211,14 @@ function generaterandomString() {
 //verifies the email and password of the user
 function credentialVerify(email, password) {
   for (let user in users) {
-    if (users[user]['email'] === email && bcrypt.compareSync(password,users[user]['password'])) {
-      const verifiedID = users[user]["id"];
+    let passwordToCompare = users[user]['password'];
+    if (users[user]['email'] === email && (bcrypt.compareSync(password, passwordToCompare))) {
+      const verifiedID = users[user]['id'];
       return verifiedID;
     }
   }
   return false;
-}
+};
 
 
 function urlsForUser(id) {
@@ -244,6 +236,5 @@ return specificUserObject
 
 // app.get("/hello", (req, res) => {
 //   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
 
 
