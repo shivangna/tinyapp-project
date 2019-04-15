@@ -2,10 +2,19 @@
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
-var cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session')
 app.set("view engine", "ejs");
-app.use(cookieParser())
+app.use(cookieSession({
+  name: 'session',
+  keys: ["TinyApp key"],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
+//makes POST request body human readable
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 
 
 const urlDatabase = {
@@ -32,23 +41,24 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-//makes POST request body human readable
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
+
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+  if (req.session.user_id) {
+    res.redirect("/urls")
+  } else {
+  res.redirect("/login");
+}});
 
 
 //renders the URLs
 app.get("/urls", (req, res) => {
-  if (req.cookies["user_id"]) {
-  let templateVars = {user_id: req.cookies["user_id"], urls: urlsForUser(req.cookies["user_id"]), loggedUser: users[req.cookies["user_id"]]};
+  if (req.session.user_id) {
+    let templateVars = {user_id: req.session.user_id, urls: urlsForUser(req.session.user_id), loggedUser: req.session.user_id, users: users};
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
   } else {
-    res.status(403).send("please log in to use your URLs")
+    res.status(400).send("please log in at localhost:8080/login to access your URLs")
   }
 });
 
@@ -59,8 +69,8 @@ app.get("/urls.json", (req, res) => {
 
 // renders the page with the form that allows a user to input a longURL and send that data to API via a POST request
 app.get("/urls/new", (req, res) => {
-  let templateVars = { userInfo: users[req.cookies["user_id"]],  user_id: req.cookies["user_id"], loggedUser: users[req.cookies["user.id"]]};
-  if (req.cookies["user_id"]) {
+  let templateVars = { users: users,  user_id: req.session.user_id};
+  if (req.session.user_id) {
   res.render("urls_new", templateVars);
 } else res.redirect("/login")
 });
@@ -73,7 +83,7 @@ app.post("/urls/:shortURL/", (req, res) => {
   console.log(theShortURL)
   const UpdatedLongURL = req.body.longURL
 
-  if (urlDatabase[theShortURL]['userID'] === req.cookies["user_id"]) {
+  if (urlDatabase[theShortURL]['userID'] === req.session.user_id) {
   for (var urlKeyValues in urlDatabase) {
     if (urlKeyValues === theShortURL) {
       urlDatabase[urlKeyValues]['longURL'] = UpdatedLongURL;
@@ -83,7 +93,6 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 // user gives short URL which gets redirected to its long url
 app.get("/u/:shortURL", (req, res) => {
-  let templateVars = {user_id: req.cookies["user_id"]}
   const longURL = urlDatabase[req.params.shortURL]['longURL'];
   res.redirect(longURL);
 });
@@ -91,7 +100,7 @@ app.get("/u/:shortURL", (req, res) => {
 //route handles POST requests when user visits urls/new and also handles POST requests from the form. Sends that to the body parser
 app.post("/urls", (req, res) => {
   var shortURLgenerated = generaterandomString();
-  urlDatabase[shortURLgenerated] = {longURL: req.body.longURL, userID: req.cookies["user_id"]};  // Log the POST request body to the console
+  urlDatabase[shortURLgenerated] = {longURL: req.body.longURL, userID: req.session.user_id};  // Log the POST request body to the console
   console.log(urlDatabase);
   res.redirect("/urls/" + shortURLgenerated);         // Respond with 'Ok' (we will replace this)
 });
@@ -100,7 +109,7 @@ app.post("/urls", (req, res) => {
 //handles delete requests
 app.post("/urls/:shortURL/delete", (req, res) => {
   const urlToDelete = req.params.shortURL // obtains the shorturl to delete
-  if (urlDatabase[urlToDelete]['userID'] === req.cookies["user_id"]) {
+  if (urlDatabase[urlToDelete]['userID'] === req.session.user_id) {
   delete urlDatabase[urlToDelete];
   console.log(urlDatabase);
   }
@@ -110,7 +119,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //short URL page
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { user_id: req.cookies["user_id"], shortURL: req.params.shortURL, longURL: urlDatabase, urlDatabase: urlDatabase, loggedUser: users[req.cookies["user.id"]]};
+  let templateVars = { user_id: req.session.user_id, shortURL: req.params.shortURL, urlDatabase: urlDatabase, users: users};
   res.render("urls_show", templateVars);
 });
 
@@ -122,7 +131,7 @@ app.post("/login", (req, res) => {
   const userPassword = req.body.password;
   const verifiedUserID = credentialVerify(userEmail, userPassword);
   if (verifiedUserID) {
-    res.cookie('user_id', verifiedUserID)
+    req.session.user_id = verifiedUserID;
     res.redirect("/urls");
   } else {
     res.status(403).send("please input the correct credentials")
@@ -140,7 +149,7 @@ app.get("/login", (req, res) => {
 
 //handles the logout page and deletes the cookies
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect("/urls");
 });
 
@@ -163,7 +172,7 @@ app.post("/register", (req, res) => {
     res.status(400).send("email already in use");
   } else {
     users[user_id] = {'id': user_id, 'email': user_email, 'password' : hashedPassword}
-    res.cookie('user_id', user_id);
+    req.session.user_id;
     res.redirect("/urls");
   }
 });
