@@ -53,7 +53,7 @@ app.post("/login", (req, res) => {
 //renders the URLs
 app.get("/urls", (req, res) => {
   if (req.session.user_id) {
-    let templateVars = {user_id: req.session.user_id, urls: urlsForUser(req.session.user_id), loggedUser: req.session.user_id, users: users};
+    let templateVars = {user_id: req.session.user_id, urlDatabase: urlDatabase, users: users};
   //since views ia Express convention, it automatically looks under views for template files, therefore directory (views) and .ejs in extension do not need to be specified
   res.render("urls_index", templateVars);
   } else {
